@@ -8,7 +8,7 @@
 template <typename T, typename KeyT = int>
 class IdealCache
 {
-    size_t size_;
+    size_t cache_size_;
 
     std::vector<T> cache_;
     using CacheIt = typename std::vector<T>::iterator;
@@ -30,7 +30,7 @@ public:
 
 template <typename T, typename KeyT>
 IdealCache<T, KeyT>::IdealCache(size_t cache_size, const std::vector<KeyT> &queries):
-    cache_(cache_size), queries_(queries)
+    cache_size_(cache_size), queries_(queries)
 {
     cache_.reserve(cache_size);
     cur_plus_one_queries_it_ = queries_.cbegin();
@@ -47,7 +47,7 @@ bool IdealCache<T, KeyT>::lookup_update(KeyT id, F slow_get_page)
 
     // if cache is not full yet
     size_t cur_size = 0;
-    if ( (cur_size = hash_.size()) != size_)
+    if ( (cur_size = hash_.size()) != cache_size_)
     {
         cache_[cur_size] = slow_get_page(id);
         hash_[id] = cache_.begin() + cur_size;
