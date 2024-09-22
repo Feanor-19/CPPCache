@@ -26,14 +26,11 @@ int main(int, char**)
     while (elems_cnt-- && std::cin >> input)
         queries.push_back(input);
 
-    std::cout << queries.size() << std::endl;
-    
     IdealCache<page_t> cache(cache_size, queries);
     
     size_t hits = 0;
     for (auto it = queries.cbegin(); it != queries.cend(); it++)
     {
-        std::cout << "check" << std::endl;
         hits += cache.lookup_update(*it, slow_get_page);
     }
     std::cout << hits << std::endl;
