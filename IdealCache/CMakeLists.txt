@@ -9,16 +9,16 @@ SET(E2E_TESTS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/E2E_tests)
 
 #message("E2E_TESTS_DIR: ${E2E_TESTS_DIR}")
 
-file(GLOB E2E_TESTS_FILES "${E2E_TESTS_DIR}/*")
+file(GLOB E2E_TESTS_FILES "${E2E_TESTS_DIR}/*.in")
 
 #message("E2E_TESTS_FILES: ${E2E_TESTS_FILES}")
 
-# отобрать уникальные??
-
 foreach(file ${E2E_TESTS_FILES})
-    cmake_path(GET file FILENAME base_name)
-    add_test(NAME ${file}
-        COMMAND bash -c "${CMAKE_SOURCE_DIR}/runtest.sh ${file} ./LC.x"
+    cmake_path(GET file STEM test_stem)
+    message("arg : ${E2E_TESTS_DIR}/${test_stem}")
+    message("curr bin dir: ${CMAKE_CURRENT_BINARY_DIR}")
+    add_test(NAME ${test_stem}
+        COMMAND bash -c "${CMAKE_CURRENT_SOURCE_DIR}/runtest.sh $<TARGET_FILE:IC> ${E2E_TESTS_DIR}/${test_stem}"
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-    set_tests_properties(${file} PROPERTIES DEPENDS LC.x)
+    set_tests_properties(${test_stem} PROPERTIES DEPENDS IC)
 endforeach()
