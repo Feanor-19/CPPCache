@@ -16,14 +16,14 @@ page_t slow_get_page(int id)
 
 int main(int, char**)
 {
-    size_t cache_size = 0, elems_cnt = 0;
-    std::cin >> cache_size >> elems_cnt;
+    size_t cache_size = 0, queries_cnt = 0;
+    std::cin >> cache_size >> queries_cnt;
 
     std::vector<int> queries;
-    queries.reserve(elems_cnt);
+    queries.reserve(queries_cnt);
 
     int input = 0;
-    while (elems_cnt-- && std::cin >> input)
+    while (queries_cnt-- && std::cin >> input)
         queries.push_back(input);
 
     IdealCache<page_t> cache(cache_size, queries);
