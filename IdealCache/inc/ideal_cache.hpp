@@ -26,8 +26,6 @@ public:
     bool lookup_update(KeyT id, F slow_get_page);
 };
 
-#include <algorithm>
-
 template <typename T, typename KeyT>
 IdealCache<T, KeyT>::IdealCache(size_t cache_size, const std::vector<KeyT> &queries):
     cache_size_(cache_size), queries_(queries)
@@ -60,6 +58,7 @@ bool IdealCache<T, KeyT>::lookup_update(KeyT id, F slow_get_page)
     }
 
     std::unordered_set<KeyT> unmet_ids;
+    unmet_ids.reserve(cache_size_);
     for (auto it = hash_.cbegin(); it != hash_.cend(); ++it) 
         unmet_ids.insert(it->first);
 

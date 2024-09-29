@@ -25,8 +25,6 @@ public:
     bool lookup_update(KeyT id, F slow_get_page);
 };
 
-#include <algorithm>
-
 template <typename T, typename KeyT>
 LFUCache<T, KeyT>::LFUCache(size_t cache_size):
     cache_size_(cache_size)
