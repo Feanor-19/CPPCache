@@ -10,7 +10,6 @@ struct page_t
 
 page_t slow_get_page(int id)
 {
-    // it should be slow on its own?
     return {id, NULL};
 }
 

@@ -13,7 +13,6 @@ struct page_t
 
 page_t slow_get_page(int id)
 {
-    // it should be slow on its own?
     return {id, NULL};
 }
 
@@ -22,7 +21,7 @@ static void BM_IC_lookup_update(benchmark::State &state)
     //setup
     size_t cache_size = 0, queries_cnt = 0;
 
-    std::ifstream file("../../../../E2E_tests/default.in");
+    std::ifstream file("../../../../IdealCache/benchmark_data/bench.dat");
     if (!file.is_open())
         std::cout << "Unable to open file" << std::endl; 
 
