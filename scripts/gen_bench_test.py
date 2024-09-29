@@ -3,7 +3,7 @@ import random
 
 def main():
     if len(sys.argv) != 5:
-        print("Usage: python script.py <cache_size> <queries_count> <queries_range> <filename>")
+        print(f"Usage: python3 {sys.argv[0]} <cache_size> <queries_count> <queries_range> <filename>")
         sys.exit(1)
 
     cache_size = int(sys.argv[1])
@@ -11,7 +11,7 @@ def main():
     queries_range = int(sys.argv[3])
     filename = sys.argv[4]
 
-    print(f"Cache Size: {cache_size}")
+    print(f"Cache Size:    {cache_size}")
     print(f"Queries Count: {queries_count}")
     print(f"Queries Range: {queries_range}")
     print(f"Output filename: {filename}")

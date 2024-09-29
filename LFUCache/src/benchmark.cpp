@@ -3,7 +3,7 @@
 #include <iostream>
 #include <fstream>
 
-#include "ideal_cache.hpp"
+#include "lfu_cache.hpp"
 
 struct page_t
 {
@@ -16,7 +16,7 @@ page_t slow_get_page(int id)
     return {id, NULL};
 }
 
-static void BM_IC_lookup_update(benchmark::State &state)
+static void BM_LFUC_lookup_update(benchmark::State &state)
 {
     //setup
     size_t cache_size = 0, queries_cnt = 0;
@@ -34,7 +34,7 @@ static void BM_IC_lookup_update(benchmark::State &state)
     while (queries_cnt-- && file >> input)
         queries.push_back(input);
 
-    IdealCache<page_t> cache(cache_size, queries);
+    LFUCache<page_t> cache(cache_size);
     size_t hits = 0;
     for (auto _ : state)
     {
@@ -48,6 +48,6 @@ static void BM_IC_lookup_update(benchmark::State &state)
     std::cout << "Hits: " << hits << std::endl;
 }
 
-BENCHMARK(BM_IC_lookup_update);
+BENCHMARK(BM_LFUC_lookup_update);
 
 BENCHMARK_MAIN();
