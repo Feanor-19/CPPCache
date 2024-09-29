@@ -40,17 +40,22 @@ template <typename T, typename KeyT>
 template <typename F>
 bool IdealCache<T, KeyT>::lookup_update(KeyT id, F slow_get_page)
 {
+    if (cache_size_ == 0)
+    {
+        slow_get_page(id);
+        return false;
+    }
+
     cur_plus_one_queries_it_++;
 
     if (hash_.find(id) != hash_.end())
         return true;
 
     // if cache is not full yet
-    size_t cur_size = 0;
-    if ( (cur_size = hash_.size()) != cache_size_)
+    if (hash_.size() != cache_size_)
     {
-        cache_[cur_size] = slow_get_page(id);
-        hash_[id] = cache_.begin() + cur_size;
+        cache_.push_back(slow_get_page(id));
+        hash_[id] = cache_.end() - 1;
         return false;
     }
 
