@@ -2,10 +2,15 @@
 
 ## Установка
 
-### Предварительные требования (prerequisites)
+### Необходимые сторонние инструменты
 
 - cmake >=3.11
 - conan >= 2.7.1
+
+Если `conan` используется первый раз, требуется также исполнить: 
+```
+conan profile detect
+```
 
 ### Клонирование репозитория
 
@@ -17,13 +22,11 @@ cd CPPCache
 ### Подготовка зависимостей
 
 ```
-conan profile detect --force
 conan install . --output-folder=build --build=missing
 ```
 
 ### Сборка с cmake
 
-Linux:
 ```
 cd build
 cmake .. -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release
