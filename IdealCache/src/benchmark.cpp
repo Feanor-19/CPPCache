@@ -21,7 +21,7 @@ static void BM_IC_lookup_update(benchmark::State &state)
     //setup
     size_t cache_size = 0, queries_cnt = 0;
 
-    std::ifstream file("../../../../benchmark_data/bench_1000_100000_10000.dat");
+    std::ifstream file("benchmark_data/bench_1000_100000_10000.dat");
     if (!file.is_open())
         std::cout << "Unable to open file" << std::endl; 
 
