@@ -1,7 +1,36 @@
 # Сравнение частоты попадания и скорости работы "идеального" алгоритма кэширования и алгоритма LFU
 
-## Краткое описание алгоритмов
+## Установка
 
+### Предварительные требования (prerequisites)
+
+- cmake >=3.11
+- conan >= 2.7.1
+
+### Клонирование репозитория
+
+```
+git clone https://github.com/Feanor-19/CPPCache
+cd CPPCache
+```
+
+### Подготовка зависимостей
+
+```
+conan profile detect --force
+conan install . --output-folder=build --build=missing
+```
+
+### Сборка с cmake
+
+Linux:
+```
+cd build
+cmake .. -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release
+cmake --build .
+```
+
+## Краткое описание алгоритмов
 
 ### "Идеальный"
 
