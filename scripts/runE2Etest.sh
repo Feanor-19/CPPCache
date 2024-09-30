@@ -29,7 +29,7 @@ if [ ! -f "$file_out_val" ]; then
 fi
 
 # Run application, redirect in file to app, and output to out file
-output=$("$bin" < "$file_in")
+output=$("$bin" < "$file_in" 2>&1)
 expected=$(cat $file_out_val)
 
 # Execute diff
