@@ -13,10 +13,14 @@ class LFUCache
 
     std::vector<T> cache_;
     using CacheIt = typename std::vector<T>::iterator;
-
+    
     std::unordered_map<KeyT, CacheIt> hash_;
+    
+    using freq_t = size_t; 
+    std::multimap<freq_t, KeyT> freq_;
+    using FreqIt = typename std::multimap<freq_t, KeyT>::iterator;
 
-    std::map<KeyT, size_t> freq_;
+    std::unordered_map<KeyT, FreqIt> freq_it_by_id_;
 
 public:
     explicit LFUCache(size_t cache_size);
@@ -44,7 +48,13 @@ bool LFUCache<T, KeyT>::lookup_update(KeyT id, F slow_get_page)
 
     if (hash_.find(id) != hash_.end())
     {
-        freq_[id]++;
+        FreqIt old_freq_it = freq_it_by_id_[id];
+        freq_t freq_val = old_freq_it->first;
+        freq_.erase(old_freq_it);
+
+        FreqIt new_freq_it = freq_.insert({freq_val+1, id}); 
+        freq_it_by_id_[id] = new_freq_it;
+
         return true;
     }
 
@@ -53,24 +63,13 @@ bool LFUCache<T, KeyT>::lookup_update(KeyT id, F slow_get_page)
     {
         cache_.push_back(slow_get_page(id));
         hash_[id] = cache_.end() - 1;
-        freq_[id] = 1;
+        FreqIt freq_it = freq_.insert({1, id});
+        freq_it_by_id_[id] = freq_it;
         return false;
     }
 
     // choose which element to pop from cache
-    size_t min_val = (size_t) -1;
-    KeyT id_to_pop = (freq_.begin())->first;
-    for (const std::pair<KeyT, size_t>& elem : freq_)
-    {
-        KeyT id = elem.first;
-        size_t id_freq = elem.second;
-
-        if (id_freq < min_val)
-        {
-            min_val = id_freq;
-            id_to_pop = id;
-        }
-    }
+    KeyT id_to_pop = (freq_.begin())->second;
 
     CacheIt cache_it = hash_[id_to_pop];
     *cache_it = slow_get_page(id);
@@ -78,8 +77,10 @@ bool LFUCache<T, KeyT>::lookup_update(KeyT id, F slow_get_page)
     hash_.erase(id_to_pop);
     hash_[id] = cache_it;
 
-    freq_.erase(id_to_pop);
-    freq_[id] = 1;
+    FreqIt freq_it = freq_it_by_id_[id_to_pop];
+    freq_it_by_id_.erase(id_to_pop);
+
+    freq_.erase(freq_it);
 
     return false;
 }
