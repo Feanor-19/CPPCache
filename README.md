@@ -2,6 +2,16 @@
 
 ## Установка
 
+### Виртуальное окружение
+
+Все последующие шаги, включая установку conan, можно делать в [виртуальном окружении](https://docs.python.org/3/library/venv.html):
+
+```
+python3 -m venv .venv
+source .venv/bin/activate
+pip3 install conan
+```
+
 ### Необходимые сторонние инструменты
 
 - cmake >=3.11
