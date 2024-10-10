@@ -77,10 +77,13 @@ bool LFUCache<T, KeyT>::lookup_update(KeyT id, F slow_get_page)
     hash_.erase(id_to_pop);
     hash_[id] = cache_it;
 
+    // remove old one
     FreqIt freq_it = freq_it_by_id_[id_to_pop];
     freq_it_by_id_.erase(id_to_pop);
-
     freq_.erase(freq_it);
+
+    // insert new one
+    freq_it_by_id_[id] = freq_.insert({1, id});
 
     return false;
 }
