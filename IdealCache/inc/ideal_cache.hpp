@@ -19,6 +19,11 @@ class IdealCache
     using QueriesIt = typename std::vector<KeyT>::const_iterator;
     QueriesIt cur_plus_one_queries_it_;
 
+    using QueriesItVec = typename std::vector<QueriesIt>;
+    using QIVIt = typename QueriesItVec::const_iterator;
+
+    std::unordered_map<KeyT, std::pair<QIVIt, QueriesItVec>> queries_by_id_;
+
 public:
     explicit IdealCache(size_t cache_size, const std::vector<KeyT> &queries);
 
@@ -32,6 +37,18 @@ IdealCache<T, KeyT>::IdealCache(size_t cache_size, const std::vector<KeyT> &quer
 {
     cache_.reserve(cache_size);
     cur_plus_one_queries_it_ = queries_.cbegin();
+
+    for (QueriesIt it = queries_.cbegin(); it != queries_.cend(); it++)
+    {
+        QueriesItVec &queries_it_vec = queries_by_id_[*it].second;
+        queries_it_vec.push_back(it);
+    }
+        
+    for (auto it = queries_by_id_.begin(); it != queries_by_id_.end(); it++)
+    {
+        QIVIt &qiv_it = it->second.first;
+        qiv_it = it->second.second.begin();
+    }
 }
 
 template <typename T, typename KeyT>
@@ -45,9 +62,14 @@ bool IdealCache<T, KeyT>::lookup_update(KeyT id, F slow_get_page)
     }
 
     cur_plus_one_queries_it_++;
+    queries_by_id_[id].first++;
 
     if (hash_.find(id) != hash_.end())
         return true;
+
+    // if the id we're searching place for won't be met anymore, we don't need to save it in cache
+    if (queries_by_id_[id].first == queries_by_id_[id].second.cend()) 
+        return false;
 
     // if cache is not full yet
     if (hash_.size() != cache_size_)
@@ -57,17 +79,37 @@ bool IdealCache<T, KeyT>::lookup_update(KeyT id, F slow_get_page)
         return false;
     }
 
-    std::unordered_set<KeyT> unmet_ids;
-    unmet_ids.reserve(cache_size_);
-    for (auto it = hash_.cbegin(); it != hash_.cend(); ++it) 
-        unmet_ids.insert(it->first);
+    // choose which element to pop from cache
+    KeyT id_to_pop = (hash_.begin())->first;
+    typename std::vector<KeyT>::difference_type max_diff = 0;
+    for (auto it = hash_.cbegin(); it != hash_.cend(); it++)
+    {
+        KeyT id = it->first;
+        const QIVIt &qiv_it = queries_by_id_[id].first;
+        const QueriesItVec &queries_it_vec = queries_by_id_[id].second;
 
-    auto id_to_pop_it = cur_plus_one_queries_it_;
-    for (; id_to_pop_it != queries_.cend() && unmet_ids.size() > 1; id_to_pop_it++)
-        unmet_ids.erase(*id_to_pop_it);
+        if (qiv_it == queries_it_vec.cend()) // if this id won't be met anymore
+        {
+            id_to_pop = id;
+            break;
+        }
 
-    const KeyT id_to_pop = *(unmet_ids.cbegin());
+        if (*qiv_it - cur_plus_one_queries_it_ > max_diff)
+        {
+            id_to_pop = id;
+            max_diff = *qiv_it - cur_plus_one_queries_it_;
+        }
+    }
 
+    //если тот id, который мы собираемся выпнуть, ближайший раз встретится раньше, чем
+    // в следующий раз встретится тот, который мы собираемся положить, то ничего в кэше менять не надо?
+    
+    // if the id we're going to pop we'll meet sooner than the id we're going to save in cache,
+    // there is no need to change anything in cache
+    if ( *(queries_by_id_[id_to_pop].first) < *(queries_by_id_[id].first))
+        return false;
+
+    // remove old one and insert new one
     CacheIt cache_it = hash_[id_to_pop];
     *cache_it = slow_get_page(id);
 
