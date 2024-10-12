@@ -26,5 +26,4 @@ foreach(file ${E2E_TESTS_FILES})
     add_test(NAME ${test_name}
         COMMAND bash -c "${CMAKE_SOURCE_DIR}/scripts/runE2Etest.sh $<TARGET_FILE:LFUC> ${E2E_TESTS_DIR}/${test_stem}"
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-    set_tests_properties(${test_name} PROPERTIES DEPENDS LFUC)
 endforeach()
