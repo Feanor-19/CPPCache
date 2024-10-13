@@ -101,14 +101,6 @@ bool IdealCache<T, KeyT>::lookup_update(KeyT id, F slow_get_page)
         }
     }
 
-    //если тот id, который мы собираемся выпнуть, ближайший раз встретится раньше, чем
-    // в следующий раз встретится тот, который мы собираемся положить, то ничего в кэше менять не надо?
-    
-    // if the id we're going to pop we'll meet sooner than the id we're going to save in cache,
-    // there is no need to change anything in cache
-    if ( *(queries_by_id_[id_to_pop].first) < *(queries_by_id_[id].first))
-        return false;
-
     // remove old one and insert new one
     CacheIt cache_it = hash_[id_to_pop];
     *cache_it = slow_get_page(id);
