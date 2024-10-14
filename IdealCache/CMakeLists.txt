@@ -29,3 +29,14 @@ foreach(file ${E2E_ALL_TESTS_FILES})
         COMMAND bash -c "${CMAKE_SOURCE_DIR}/scripts/runE2Etest.sh $<TARGET_FILE:IC> ${test_parent_path}/${test_stem}"
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 endforeach()
+
+# Unit tests with GTest
+
+find_package(GTest REQUIRED)
+
+add_executable(IC_unit_tests ${SRC_DIR}/IC_unit_tests.cpp)
+target_include_directories(IC_unit_tests PUBLIC inc)
+target_link_libraries(IC_unit_tests gtest::gtest)
+
+include(GoogleTest)
+gtest_discover_tests(IC_unit_tests)
