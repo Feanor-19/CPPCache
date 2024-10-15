@@ -37,3 +37,10 @@ TEST(IC, LookupUpdateZeroCacheSize)
 	EXPECT_FALSE(lookup);
 }
 
+TEST(IC, EmptyQueriesCtor)
+{
+	std::vector<int> empty_queries;
+
+	IdealCache<page_t> IC(19, empty_queries);
+	// must not crash
+}
