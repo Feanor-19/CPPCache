@@ -31,7 +31,7 @@ int main(int, char**)
     while (queries_cnt-- && std::cin >> input)
         queries.push_back(input);
 
-    if (queries_cnt > 0)
+    if (queries_cnt > 0 || !std::cin)
     {
         std::cerr << "ERROR: Not full input!" << std::endl;
         return 2;
