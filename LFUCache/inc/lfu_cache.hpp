@@ -23,7 +23,7 @@ class LFUCache
     std::unordered_map<KeyT, FreqIt> freq_it_by_id_;
 
 public:
-    explicit LFUCache(size_t cache_size);
+    LFUCache(size_t cache_size);
 
     template <typename F>
     bool lookup_update(KeyT id, F slow_get_page);
@@ -52,7 +52,7 @@ bool LFUCache<T, KeyT>::lookup_update(KeyT id, F slow_get_page)
         freq_t freq_val = old_freq_it->first;
         freq_.erase(old_freq_it);
 
-        FreqIt new_freq_it = freq_.insert({freq_val+1, id}); 
+        FreqIt new_freq_it = freq_.emplace(freq_val+1, id); 
         freq_it_by_id_[id] = new_freq_it;
 
         return true;
@@ -63,7 +63,7 @@ bool LFUCache<T, KeyT>::lookup_update(KeyT id, F slow_get_page)
     {
         cache_.push_back(slow_get_page(id));
         hash_[id] = cache_.end() - 1;
-        FreqIt freq_it = freq_.insert({1, id});
+        FreqIt freq_it = freq_.emplace(1, id);
         freq_it_by_id_[id] = freq_it;
         return false;
     }
@@ -83,7 +83,7 @@ bool LFUCache<T, KeyT>::lookup_update(KeyT id, F slow_get_page)
     freq_.erase(freq_it);
 
     // insert new one
-    freq_it_by_id_[id] = freq_.insert({1, id});
+    freq_it_by_id_[id] = freq_.emplace(1, id);
 
     return false;
 }

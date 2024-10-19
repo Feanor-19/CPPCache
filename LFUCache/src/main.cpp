@@ -40,9 +40,9 @@ int main(int, char**)
     LFUCache<page_t> cache(cache_size);
     
     size_t hits = 0;
-    for (auto it = queries.cbegin(); it != queries.cend(); it++)
+    for (auto &query : queries)
     {
-        hits += cache.lookup_update(*it, slow_get_page);
+        hits += cache.lookup_update(query, slow_get_page);
     }
     std::cout << hits << std::endl;
 }

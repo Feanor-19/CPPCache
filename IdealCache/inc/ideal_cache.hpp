@@ -25,7 +25,7 @@ class IdealCache
     std::unordered_map<KeyT, std::pair<QIVIt, QueriesItVec>> queries_by_id_;
 
 public:
-    explicit IdealCache(size_t cache_size, const std::vector<KeyT> &queries);
+    IdealCache(size_t cache_size, const std::vector<KeyT> &queries);
 
     template <typename F>
     bool lookup_update(KeyT id, F slow_get_page);
@@ -44,10 +44,10 @@ IdealCache<T, KeyT>::IdealCache(size_t cache_size, const std::vector<KeyT> &quer
         queries_it_vec.push_back(it);
     }
         
-    for (auto it = queries_by_id_.begin(); it != queries_by_id_.end(); it++)
+    for (auto &elem : queries_by_id_)
     {
-        QIVIt &qiv_it = it->second.first;
-        qiv_it = it->second.second.begin();
+        QIVIt &qiv_it = elem.second.first;
+        qiv_it = elem.second.second.begin();
     }
 }
 
@@ -82,9 +82,9 @@ bool IdealCache<T, KeyT>::lookup_update(KeyT id, F slow_get_page)
     // choose which element to pop from cache
     KeyT id_to_pop = (hash_.begin())->first;
     typename std::vector<KeyT>::difference_type max_diff = 0;
-    for (auto it = hash_.cbegin(); it != hash_.cend(); it++)
+    for (auto &elem : hash_)
     {
-        KeyT id = it->first;
+        KeyT id = elem.first;
         const QIVIt &qiv_it = queries_by_id_[id].first;
         const QueriesItVec &queries_it_vec = queries_by_id_[id].second;
 
