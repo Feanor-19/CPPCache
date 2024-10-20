@@ -24,16 +24,21 @@ class IdealCache
 
     std::unordered_map<KeyT, std::pair<QIVIt, QueriesItVec>> queries_by_id_;
 
+    bool will_meet_id(KeyT id);
+    KeyT choose_id_to_pop();
+
 public:
     IdealCache(size_t cache_size, const std::vector<KeyT> &queries);
 
     template <typename F>
     bool lookup_update(KeyT id, F slow_get_page);
+
+    bool full();
 };
 
+
 template <typename T, typename KeyT>
-IdealCache<T, KeyT>::IdealCache(size_t cache_size, const std::vector<KeyT> &queries):
-    cache_size_(cache_size), queries_(queries)
+IdealCache<T, KeyT>::IdealCache(size_t cache_size, const std::vector<KeyT> &queries) : cache_size_(cache_size), queries_(queries)
 {
     cache_.reserve(cache_size);
     cur_plus_one_queries_it_ = queries_.cbegin();
@@ -52,6 +57,47 @@ IdealCache<T, KeyT>::IdealCache(size_t cache_size, const std::vector<KeyT> &quer
 }
 
 template <typename T, typename KeyT>
+inline bool IdealCache<T, KeyT>::will_meet_id(KeyT id)
+{
+    const QIVIt &qiv_it = queries_by_id_[id].first;
+    const QueriesItVec &queries_it_vec = queries_by_id_[id].second;
+
+    return qiv_it != queries_it_vec.cend();
+}
+
+template <typename T, typename KeyT>
+inline KeyT IdealCache<T, KeyT>::choose_id_to_pop()
+{
+    KeyT id_to_pop = (hash_.begin())->first;
+    typename std::vector<KeyT>::difference_type max_diff = 0;
+    for (auto &elem : hash_)
+    {
+        KeyT id = elem.first;
+        const QIVIt &qiv_it = queries_by_id_[id].first;
+        const QueriesItVec &queries_it_vec = queries_by_id_[id].second;
+
+        if (!will_meet_id(id))
+        {
+            id_to_pop = id;
+            break;
+        }
+
+        if (*qiv_it - cur_plus_one_queries_it_ > max_diff)
+        {
+            id_to_pop = id;
+            max_diff = *qiv_it - cur_plus_one_queries_it_;
+        }
+    }
+    return id_to_pop;
+}
+
+template <typename T, typename KeyT>
+inline bool IdealCache<T, KeyT>::full()
+{
+    return hash_.size() == cache_size_;
+}
+
+template <typename T, typename KeyT>
 template <typename F>
 bool IdealCache<T, KeyT>::lookup_update(KeyT id, F slow_get_page)
 {
@@ -67,41 +113,18 @@ bool IdealCache<T, KeyT>::lookup_update(KeyT id, F slow_get_page)
     if (hash_.find(id) != hash_.end())
         return true;
 
-    // if the id we're searching place for won't be met anymore, we don't need to save it in cache
-    if (queries_by_id_[id].first == queries_by_id_[id].second.cend()) 
+    if (!will_meet_id(id)) 
         return false;
 
-    // if cache is not full yet
-    if (hash_.size() != cache_size_)
+    if (!full())
     {
         cache_.push_back(slow_get_page(id));
         hash_[id] = cache_.end() - 1;
         return false;
     }
 
-    // choose which element to pop from cache
-    KeyT id_to_pop = (hash_.begin())->first;
-    typename std::vector<KeyT>::difference_type max_diff = 0;
-    for (auto &elem : hash_)
-    {
-        KeyT id = elem.first;
-        const QIVIt &qiv_it = queries_by_id_[id].first;
-        const QueriesItVec &queries_it_vec = queries_by_id_[id].second;
+    KeyT id_to_pop = choose_id_to_pop();
 
-        if (qiv_it == queries_it_vec.cend()) // if this id won't be met anymore
-        {
-            id_to_pop = id;
-            break;
-        }
-
-        if (*qiv_it - cur_plus_one_queries_it_ > max_diff)
-        {
-            id_to_pop = id;
-            max_diff = *qiv_it - cur_plus_one_queries_it_;
-        }
-    }
-
-    // remove old one and insert new one
     CacheIt cache_it = hash_[id_to_pop];
     *cache_it = slow_get_page(id);
 

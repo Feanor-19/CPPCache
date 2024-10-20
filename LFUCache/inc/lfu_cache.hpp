@@ -25,6 +25,8 @@ class LFUCache
 public:
     LFUCache(size_t cache_size);
 
+    bool full();
+
     template <typename F>
     bool lookup_update(KeyT id, F slow_get_page);
 };
@@ -34,6 +36,12 @@ LFUCache<T, KeyT>::LFUCache(size_t cache_size):
     cache_size_(cache_size)
 {
     cache_.reserve(cache_size);
+}
+
+template <typename T, typename KeyT>
+inline bool LFUCache<T, KeyT>::full()
+{
+    return hash_.size() == cache_size_;
 }
 
 template <typename T, typename KeyT>
@@ -58,8 +66,7 @@ bool LFUCache<T, KeyT>::lookup_update(KeyT id, F slow_get_page)
         return true;
     }
 
-    // if cache is not full yet
-    if (hash_.size() != cache_size_)
+    if (!full())
     {
         cache_.push_back(slow_get_page(id));
         hash_[id] = cache_.end() - 1;
@@ -68,7 +75,6 @@ bool LFUCache<T, KeyT>::lookup_update(KeyT id, F slow_get_page)
         return false;
     }
 
-    // choose which element to pop from cache
     KeyT id_to_pop = (freq_.begin())->second;
 
     CacheIt cache_it = hash_[id_to_pop];
@@ -77,12 +83,10 @@ bool LFUCache<T, KeyT>::lookup_update(KeyT id, F slow_get_page)
     hash_.erase(id_to_pop);
     hash_[id] = cache_it;
 
-    // remove old one
     FreqIt freq_it = freq_it_by_id_[id_to_pop];
     freq_it_by_id_.erase(id_to_pop);
     freq_.erase(freq_it);
 
-    // insert new one
     freq_it_by_id_[id] = freq_.emplace(1, id);
 
     return false;
