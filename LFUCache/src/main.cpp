@@ -15,27 +15,8 @@ page_t slow_get_page(int id)
 
 int main(int, char**)
 {
-    int32_t cache_size = 0, queries_cnt = 0;
-    std::cin >> cache_size >> queries_cnt;
-
-    if (!std::cin.good() || cache_size < 0 || queries_cnt < 0)
-    {
-        std::cerr << "ERROR: Wrong input!" << std::endl;
-        return 1;
-    }
-
-    std::vector<int> queries;
-    queries.reserve(queries_cnt);
-
-    int input = 0;
-    while (queries_cnt-- && std::cin >> input)
-        queries.push_back(input);
-
-    if (queries_cnt > 0 || !std::cin)
-    {
-        std::cerr << "ERROR: Not full input!" << std::endl;
-        return 2;
-    }
+    int32_t cache_size = 0;
+    ... try... 
 
     LFUCache<page_t> cache(cache_size);
     
