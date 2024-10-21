@@ -1,4 +1,5 @@
 #include "lfu_cache.hpp"
+#include "utilities.hpp"
 
 #include <iostream>
 
@@ -16,7 +17,16 @@ page_t slow_get_page(int id)
 int main(int, char**)
 {
     int32_t cache_size = 0;
-    ... try... 
+    std::vector<int> queries{};
+    try
+    {
+        CacheUtilities::get_input(cache_size, queries);
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << "ERROR: " << e.what() << "!" << '\n';
+        return 1;
+    }
 
     LFUCache<page_t> cache(cache_size);
     

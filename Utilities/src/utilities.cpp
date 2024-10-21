@@ -3,7 +3,7 @@
 #include <iostream>
 #include <exception>
 
-std::vector<int> CacheUtilities::get_queries(int32_t &cache_size_ret)
+void CacheUtilities::get_input(int32_t &cache_size_out, std::vector<int> &queries_out)
 {
     int32_t cache_size = 0, queries_cnt = 0;
     std::cin >> cache_size >> queries_cnt;
@@ -25,5 +25,6 @@ std::vector<int> CacheUtilities::get_queries(int32_t &cache_size_ret)
         throw std::runtime_error("Not full input");
     }
 
-    return queries;
+    cache_size_out = cache_size;
+    queries_out    = queries; 
 }

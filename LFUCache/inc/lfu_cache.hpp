@@ -25,7 +25,7 @@ class LFUCache
 public:
     LFUCache(size_t cache_size);
 
-    bool full();
+    bool full() const;
 
     template <typename F>
     bool lookup_update(KeyT id, F slow_get_page);
@@ -39,7 +39,7 @@ LFUCache<T, KeyT>::LFUCache(size_t cache_size):
 }
 
 template <typename T, typename KeyT>
-inline bool LFUCache<T, KeyT>::full()
+inline bool LFUCache<T, KeyT>::full() const
 {
     return hash_.size() == cache_size_;
 }

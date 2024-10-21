@@ -24,8 +24,8 @@ class IdealCache
 
     std::unordered_map<KeyT, std::pair<QIVIt, QueriesItVec>> queries_by_id_;
 
-    bool will_meet_id(KeyT id);
-    KeyT choose_id_to_pop();
+    bool will_meet_id(KeyT id) const;
+    KeyT choose_id_to_pop() const;
 
 public:
     IdealCache(size_t cache_size, const std::vector<KeyT> &queries);
@@ -33,7 +33,7 @@ public:
     template <typename F>
     bool lookup_update(KeyT id, F slow_get_page);
 
-    bool full();
+    bool full() const;
 };
 
 
@@ -57,24 +57,24 @@ IdealCache<T, KeyT>::IdealCache(size_t cache_size, const std::vector<KeyT> &quer
 }
 
 template <typename T, typename KeyT>
-inline bool IdealCache<T, KeyT>::will_meet_id(KeyT id)
+inline bool IdealCache<T, KeyT>::will_meet_id(KeyT id) const
 {
-    const QIVIt &qiv_it = queries_by_id_[id].first;
-    const QueriesItVec &queries_it_vec = queries_by_id_[id].second;
+    const QIVIt &qiv_it = queries_by_id_.at(id).first;
+    const QueriesItVec &queries_it_vec = queries_by_id_.at(id).second;
 
     return qiv_it != queries_it_vec.cend();
 }
 
 template <typename T, typename KeyT>
-inline KeyT IdealCache<T, KeyT>::choose_id_to_pop()
+inline KeyT IdealCache<T, KeyT>::choose_id_to_pop() const
 {
     KeyT id_to_pop = (hash_.begin())->first;
     typename std::vector<KeyT>::difference_type max_diff = 0;
     for (auto &elem : hash_)
     {
         KeyT id = elem.first;
-        const QIVIt &qiv_it = queries_by_id_[id].first;
-        const QueriesItVec &queries_it_vec = queries_by_id_[id].second;
+        const QIVIt &qiv_it = queries_by_id_.at(id).first;
+        const QueriesItVec &queries_it_vec = queries_by_id_.at(id).second;
 
         if (!will_meet_id(id))
         {
@@ -92,7 +92,7 @@ inline KeyT IdealCache<T, KeyT>::choose_id_to_pop()
 }
 
 template <typename T, typename KeyT>
-inline bool IdealCache<T, KeyT>::full()
+inline bool IdealCache<T, KeyT>::full() const
 {
     return hash_.size() == cache_size_;
 }

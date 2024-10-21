@@ -2,6 +2,7 @@ SET(SRC_DIR src)
 
 add_executable(LFUC ${SRC_DIR}/main.cpp)
 target_include_directories(LFUC PUBLIC inc)
+target_link_libraries(LFUC Utilities)
 
 
 # Benchmarking using google benchmark

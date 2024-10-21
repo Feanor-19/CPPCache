@@ -2,6 +2,7 @@ SET(SRC_DIR src)
 
 add_executable(IC ${SRC_DIR}/main.cpp)
 target_include_directories(IC PUBLIC inc)
+target_link_libraries(IC Utilities)
 
 
 # Benchmarking using google benchmark
