@@ -28,7 +28,10 @@ static void BM_IC_lookup_update(benchmark::State &state, Args&&... args)
 
     std::ifstream file(bench_data_filename);
     if (!file.is_open())
-        std::cout << "Unable to open file" << std::endl; 
+    {
+        state.SkipWithError("Can't open file");
+        return;
+    }
 
     file >> cache_size >> queries_cnt;
 
