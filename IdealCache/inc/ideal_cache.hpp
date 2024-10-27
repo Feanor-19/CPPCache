@@ -59,8 +59,7 @@ IdealCache<T, KeyT>::IdealCache(size_t cache_size, const std::vector<KeyT> &quer
 template <typename T, typename KeyT>
 inline bool IdealCache<T, KeyT>::will_meet_id(KeyT id) const
 {
-    const QIVIt &qiv_it = queries_by_id_.at(id).first;
-    const QueriesItVec &queries_it_vec = queries_by_id_.at(id).second;
+    const auto &[qiv_it, queries_it_vec] = queries_by_id_.at(id);
 
     return qiv_it != queries_it_vec.cend();
 }

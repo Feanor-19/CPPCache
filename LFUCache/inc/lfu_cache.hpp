@@ -69,7 +69,7 @@ bool LFUCache<T, KeyT>::lookup_update(KeyT id, F slow_get_page)
     if (!full())
     {
         cache_.push_back(slow_get_page(id));
-        hash_[id] = cache_.end() - 1;
+        hash_[id] = std::prev(cache_.end());
         FreqIt freq_it = freq_.emplace(1, id);
         freq_it_by_id_[id] = freq_it;
         return false;

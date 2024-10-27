@@ -20,7 +20,7 @@ template <class ...Args>
 static void BM_LFUC_lookup_update(benchmark::State &state, Args&&... args)
 {
     //benchmark arg setup
-    auto args_tuple = std::make_tuple(std::move(args)...);
+    auto args_tuple = std::make_tuple(std::forward<Args>(args)...);
     std::string bench_data_filename = std::get<0>(args_tuple); 
 
     //setup
