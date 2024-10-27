@@ -2,6 +2,9 @@
 
 #include "ideal_cache.hpp"
 
+namespace 
+{
+
 struct page_t
 {
     int id;
@@ -13,6 +16,7 @@ page_t slow_get_page(int id)
     return {id, NULL};
 }
 
+} // anonymous namespace
 
 TEST(IC, LookupUpdateTrivial) 
 {

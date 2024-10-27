@@ -2,16 +2,21 @@
 
 #include "lfu_cache.hpp"
 
+namespace 
+{
+
 struct page_t
 {
-	int id;
-	void *data;
+    int id;
+    void *data;
 };
 
 page_t slow_get_page(int id)
 {
-	return {id, NULL};
+    return {id, NULL};
 }
+
+} // anonymous namespace
 
 TEST(LFUC, LookupUpdateTrivial) 
 {

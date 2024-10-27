@@ -5,6 +5,9 @@
 
 #include "ideal_cache.hpp"
 
+namespace 
+{
+
 struct page_t
 {
     int id;
@@ -17,7 +20,7 @@ page_t slow_get_page(int id)
 }
 
 template <class ...Args>
-static void BM_IC_lookup_update(benchmark::State &state, Args&&... args)
+void BM_IC_lookup_update(benchmark::State &state, Args&&... args)
 {
     //benchmark arg setup
     auto args_tuple = std::make_tuple(std::forward<Args>(args)...);
@@ -56,7 +59,7 @@ static void BM_IC_lookup_update(benchmark::State &state, Args&&... args)
     std::cout << "Hits: " << hits << std::endl;
 }
 
-//BENCHMARK(BM_IC_lookup_update);
+} // anonymous namespace
 
 BENCHMARK_CAPTURE(BM_IC_lookup_update, 1000_100000_10000, \
                   std::string("benchmark_data/1000_100000_10000.dat"));

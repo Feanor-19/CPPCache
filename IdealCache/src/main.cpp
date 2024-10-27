@@ -3,6 +3,9 @@
 
 #include <iostream>
 
+namespace
+{
+
 struct page_t
 {
     int id;
@@ -13,6 +16,8 @@ page_t slow_get_page(int id)
 {
     return {id, NULL};
 }
+
+} // anonymous namespace
 
 int main(int, char**)
 {
