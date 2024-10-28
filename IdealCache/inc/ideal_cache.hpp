@@ -15,7 +15,7 @@ class IdealCache
 
     std::unordered_map<KeyT, CacheIt> hash_;
 
-    const std::vector<KeyT> &queries_; 
+    const std::vector<KeyT> queries_; 
     using QueriesIt = typename std::vector<KeyT>::const_iterator;
     QueriesIt cur_plus_one_queries_it_;
 
@@ -38,7 +38,8 @@ public:
 
 
 template <typename T, typename KeyT>
-IdealCache<T, KeyT>::IdealCache(size_t cache_size, const std::vector<KeyT> &queries) : cache_size_(cache_size), queries_(queries)
+IdealCache<T, KeyT>::IdealCache(size_t cache_size, const std::vector<KeyT> &queries) 
+    : cache_size_(cache_size), queries_(queries)
 {
     cache_.reserve(cache_size);
     cur_plus_one_queries_it_ = queries_.cbegin();
