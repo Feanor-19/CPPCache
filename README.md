@@ -31,8 +31,14 @@ cd CPPCache
 
 ### Подготовка зависимостей
 
+Release configure preset:
 ```
-conan install . --output-folder=build --build=missing
+conan install . --output-folder=build/Release --build=missing --settings=build_type=Release
+```
+
+Debug configure preset:
+```
+conan install . --output-folder=build/Debug --build=missing --settings=build_type=Debug
 ```
 
 ### Сборка с cmake
