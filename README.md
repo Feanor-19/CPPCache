@@ -43,9 +43,17 @@ conan install . --output-folder=build/Debug --build=missing --settings=build_typ
 
 ### Сборка с cmake
 
+Release:
 ```
-cd build
-cmake .. -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release
+cd build/Release
+cmake ../.. -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release
+cmake --build .
+```
+
+Debug:
+```
+cd build/Debug
+cmake ../.. -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Debug
 cmake --build .
 ```
 
